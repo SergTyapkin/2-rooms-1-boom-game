@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <title>2 ROOMS 1 BOOM</title>
+
+  <script src="assets/scripts/pages.js"></script>
+  <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
+</head>
+
+
+<body>
+<section class="page">
+  <h1 class="header-text">ROLE</h1>
+
+  <main class="main-text">
+    <a href="search.html"><button>← Ко всем ролям <img src="assets/images/info_card.svg" alt=""></button></a>
+
+    <hr>
+
+    <h1 id="role-title"><!-- Text from JS --></h1>
+
+    <hr>
+    <section>
+      <p id="role-description"><!-- Text from JS --></p>
+    </section>
+  </main>
+
+  <div class="header-image"><img src="assets/images/person_effect.svg" alt=""></div>
+</section>
+
+
+<script>
+  const queryValue = new URLSearchParams(location.search).get("role");
+
+  const titleElement = document.getElementById('role-title');
+  const descElement = document.getElementById('role-description');
+  titleElement.innerText = queryValue;
+
+  const role = Pages.roles[queryValue];
+  descElement.innerHTML = role ? role.description : '404 Информации о такой роли не найдено'
+</script>
+</body>
+</html>

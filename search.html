@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <title>2 ROOMS 1 BOOM</title>
+
+  <script src="assets/scripts/pages.js"></script>
+  <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
+</head>
+
+
+<body>
+<section class="page">
+  <h1 class="header-text">ROLES</h1>
+
+  <main class="main-text">
+    <a href="index.html"><button>← К правилам <img src="assets/images/favicon.svg" alt=""></button></a>
+
+    <h1>Поиск по ролям</h1>
+
+    <section>
+      <input class="text" id="input-search" placeholder="Название роли..." oninput="updateSearch()">
+    </section>
+
+    <hr>
+
+    <section>
+      <ul id="roles-list">
+        <!-- Roles from JS -->
+      </ul>
+    </section>
+  </main>
+
+  <div class="header-image"><img src="assets/images/info_card.svg" alt=""></div>
+</section>
+
+
+<script>
+  const listElement = document.getElementById('roles-list');
+  const inputElement = document.getElementById('input-search');
+
+  function updateSearch() {
+    const searchText = inputElement.value;
+    const resultList = Object.entries(Pages.roles).filter(
+      ([roleName, roleDesc]) => (new RegExp(searchText, 'i')).test(roleName)
+    );
+    listElement.innerHTML = '';
+    resultList.forEach(([roleName, roleDesc]) => {
+      listElement.innerHTML += `
+<li class="search-role-item"><a href="role.html?role=${encodeURIComponent(roleName)}">
+  <b class="title">${roleName}</b>
+  <div class="description">${roleDesc.description.slice(0, 100) + (roleDesc.description.length > 100 ? '...' : '')}</div>
+</a></li>
+      `
+    });
+  }
+
+  updateSearch();
+</script>
+</body>
+</html>
