@@ -21,6 +21,20 @@
     <hr>
 
     <h1 id="role-title"><!-- Text from JS --></h1>
+    <div class="roles-count">
+      <div class="blue hidden" id="blue-container">
+        <img src="assets/images/shield_person.svg" alt="">
+        <mark><span id="blue-count"><!-- Text from JS --></span> синий</mark>
+      </div>
+      <div class="red hidden" id="red-container">
+        <img src="assets/images/bomb.svg" alt="">
+        <mark><span id="red-count"><!-- Text from JS --></span> красный</mark>
+      </div>
+      <div class="grey hidden" id="grey-container">
+        <img src="assets/images/person_effect.svg" alt="">
+        <mark><span id="grey-count"><!-- Text from JS --></span> серый</mark>
+      </div>
+    </div>
 
     <hr>
     <section>
@@ -39,8 +53,32 @@
   const descElement = document.getElementById('role-description');
   titleElement.innerText = queryValue;
 
+  const blueCountElement = document.getElementById('blue-count');
+  const redCountElement = document.getElementById('red-count');
+  const greyCountElement = document.getElementById('grey-count');
+  const blueContainerElement = document.getElementById('blue-container');
+  const redContainerElement = document.getElementById('red-container');
+  const greyContainerElement = document.getElementById('grey-container');
+
   const role = Pages.roles[queryValue];
-  descElement.innerHTML = role ? role.description : '404 Информации о такой роли не найдено'
+  if (!role) {
+    descElement.innerHTML = '404 Информации о такой роли не найдено'
+  } else {
+    descElement.innerHTML = role.description;
+    blueCountElement.innerText = role.count;
+    redCountElement.innerText = role.count;
+    greyCountElement.innerText = role.count;
+    if (role.team === Teams.red) {
+      redContainerElement.classList.remove('hidden');
+    } else if (role.team === Teams.blue) {
+      blueContainerElement.classList.remove('hidden');
+    } else if (role.team === Teams.grey) {
+      greyContainerElement.classList.remove('hidden');
+    } else if (role.team === Teams.both) {
+      redContainerElement.classList.remove('hidden');
+      blueContainerElement.classList.remove('hidden');
+    }
+  }
 </script>
 </body>
 </html>

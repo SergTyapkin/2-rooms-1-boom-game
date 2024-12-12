@@ -215,6 +215,12 @@ input {
     padding: 0;
     list-style: none;
 }
+
+.roles-count {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
 .search-role-item a {
     display: block;
     padding: 15px;
@@ -232,10 +238,30 @@ input {
 .search-role-item a .description {
     color: #7c7c7c;
 }
+.search-role-item.red .title {
+    color: #e22828;
+}
+.search-role-item.blue .title {
+    color: #5590ff;
+}
+.search-role-item.grey .title {
+    color: transparent;
+    background: linear-gradient(-30deg, #7c7c7c, #ffffff, #7c7c7c);
+    background-clip: text;
+}
+.search-role-item.both .title {
+    color: transparent;
+    background: linear-gradient(-30deg, #ff8484 40%, #5590ff 60%);
+    background-clip: text;
+}
 #role-description {
     white-space: pre-wrap;
 }
 #role-description a {
     text-decoration: underline;
     color: #76ffe6;
+}
+
+.hidden {
+    display: none;
 }

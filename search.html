@@ -48,12 +48,29 @@
     );
     listElement.innerHTML = '';
     resultList.forEach(([roleName, roleDesc]) => {
+      let additionalClass = '';
+      let imageHtml = '';
+      if (roleDesc.team === Teams.red) {
+        additionalClass = 'red';
+        imageHtml = `<img src="assets/images/bomb.svg" alt="">`;
+      } else if (roleDesc.team === Teams.blue) {
+        additionalClass = 'blue';
+        imageHtml = `<img src="assets/images/shield_person.svg" alt="">`;
+      } else if (roleDesc.team === Teams.grey) {
+        additionalClass = 'grey';
+        imageHtml = `<img src="assets/images/person_effect.svg" alt="">`;
+      } else if (roleDesc.team === Teams.both) {
+        additionalClass = 'both';
+        imageHtml = `<img src="assets/images/shield_person.svg" alt=""><img src="assets/images/bomb.svg" alt="">`;
+      }
       listElement.innerHTML += `
-<li class="search-role-item"><a href="role.html?role=${encodeURIComponent(roleName)}">
-  <b class="title">${roleName}</b>
-  <div class="description">${roleDesc.description.slice(0, 100) + (roleDesc.description.length > 100 ? '...' : '')}</div>
-</a></li>
-      `
+<li class="search-role-item ${additionalClass}">
+  <a href="role.html?role=${encodeURIComponent(roleName)}">
+    <b class="title">${roleName}</b>
+    ${imageHtml}
+    <div class="description">${roleDesc.description.slice(0, 100) + (roleDesc.description.length > 100 ? '...' : '')}</div>
+  </a>
+</li>`
     });
   }
 
