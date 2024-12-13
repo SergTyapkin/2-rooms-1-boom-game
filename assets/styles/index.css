@@ -130,6 +130,11 @@ img {
     margin-bottom: -5px;
     margin-right: 5px;
 }
+img[src$=".png"] {
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 0 10px #8946a2);
+}
 mark.warning,
 .warning mark {
     color: #ffd355;

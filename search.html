@@ -52,7 +52,7 @@
       let imageHtml = '';
       if (roleDesc.team === Teams.red) {
         additionalClass = 'red';
-        imageHtml = `<img src="assets/images/bomb.svg" alt="">`;
+        imageHtml = `<img src="assets/images/black-team.png" alt="">`;
       } else if (roleDesc.team === Teams.blue) {
         additionalClass = 'blue';
         imageHtml = `<img src="assets/images/shield_person.svg" alt="">`;
@@ -61,7 +61,7 @@
         imageHtml = `<img src="assets/images/person_effect.svg" alt="">`;
       } else if (roleDesc.team === Teams.both) {
         additionalClass = 'both';
-        imageHtml = `<img src="assets/images/shield_person.svg" alt=""><img src="assets/images/bomb.svg" alt="">`;
+        imageHtml = `<img src="assets/images/shield_person.svg" alt=""><img src="assets/images/black-team.png" alt="">`;
       }
       listElement.innerHTML += `
 <li class="search-role-item ${additionalClass}">
