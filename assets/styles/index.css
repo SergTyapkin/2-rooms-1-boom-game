@@ -124,6 +124,7 @@ body::-webkit-scrollbar-corner {
 mark {
     background: none;
     font-weight: bold;
+    white-space: nowrap;
 }
 img {
     margin-bottom: -5px;
@@ -139,7 +140,11 @@ mark.blue,
 }
 mark.red,
 .red mark {
-    color: #e22828;
+    font-weight: bolder;
+    color: #000000;
+    text-shadow: 0 0 10px #8946a2;
+    padding: 0 4px;
+    border-radius: 5px;
 }
 mark.grey,
 .grey mark {
@@ -148,7 +153,8 @@ mark.grey,
 mark.both,
 .both mark {
     color: transparent;
-    background: linear-gradient(-30deg, #ff8484 40%, #5590ff 60%);
+    background: linear-gradient(-30deg, #000000 40%, #5590ff 60%);
+    text-shadow: 0 0 10px #8946a2;
     background-clip: text;
 }
 mark.info,
@@ -245,7 +251,10 @@ input {
     color: #7c7c7c;
 }
 .search-role-item.red .title {
-    color: #e22828;
+    color: #000000;
+    text-shadow: 0 0 10px #8946a2;
+    padding: 2px 4px;
+    border-radius: 5px;
 }
 .search-role-item.blue .title {
     color: #5590ff;
@@ -257,7 +266,8 @@ input {
 }
 .search-role-item.both .title {
     color: transparent;
-    background: linear-gradient(-30deg, #ff8484 40%, #5590ff 60%);
+    background: linear-gradient(-30deg, #000000 40%, #5590ff 60%);
+    text-shadow: 0 0 20px #8946a2;
     background-clip: text;
 }
 #role-description {

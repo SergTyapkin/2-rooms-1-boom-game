@@ -27,11 +27,11 @@
 
     <section>
       <h3>Цели</h3>
-      <p class="blue"><img src="assets/images/shield_person.svg" alt="">В <mark>Синей команде</mark> есть 1 <mark>Президент</mark></p>
-      <p class="red"><img src="assets/images/bomb.svg" alt="">В <mark>Красной команде</mark> есть 1 <mark>Бомбер</mark></p>
+      <p class="blue"><img src="assets/images/shield_person.svg" alt="">В <mark>Синей команде</mark> есть 1 <mark>Джейми</mark></p>
+      <p class="red"><img src="assets/images/bomb.svg" alt="">В <mark>Чёрной команде</mark> есть 1 <mark>Кромешник</mark></p>
       <p>
-        В конце игры вся комната с <mark class="red">Бомбером</mark> взрывается.
-        Если <mark class="blue">Президент</mark> и <mark class="red">Бомбер</mark> находились в одной комнате, выирывает <mark class="red">Красная команда</mark>. Если в разных комнатах - <mark class="blue">Синяя команда</mark>
+        В конце игры вся комната с <mark class="red">Кромешником</mark> взрывается.
+        Если <mark class="blue">Джейми</mark> и <mark class="red">Кромешник</mark> находились в одной комнате, выирывает <mark class="red">Чёрная команда</mark>. Если в разных комнатах - <mark class="blue">Синяя команда</mark>
       </p>
       <p class="grey"><img src="assets/images/person_effect.svg" alt=""><mark>Серые персонажи</mark> имеют свои личные цели для победы</p>
     </section>
@@ -44,8 +44,8 @@
         5 раундов с ограниченной длительностью. После каждого раунда из каждой комнаты передают заданное число людей в другую комнату.
       </p>
       <p class="info">
-        Во время раунда в каждой комнате общим голосованием должен быть выбран <mark>Лидер</mark>.
-        Именно <mark>Лидер</mark> лично выбирает людей, которые отправятся в другую комнату.
+        Во время раунда в каждой комнате общим голосованием должен быть выбран <mark>Санта</mark>.
+        Именно <mark>Санта</mark> лично выбирает людей, которые отправятся в другую комнату.
       </p>
       <table>
         <tr>
@@ -98,11 +98,11 @@
       <h4>При обмене информацией:</h4>
       <p class="blue">
         <img src="assets/images/shield_person.svg" alt="">
-        <mark class="blue">Игрокам синей команды</mark> нужно защитить <mark class="blue">Президента</mark>, при этом не выдав важную информацию <mark class="red">Красной команде</mark>.
+        <mark class="blue">Игрокам синей команды</mark> нужно защитить <mark class="blue">Джейми</mark>, при этом не выдав важную информацию <mark class="red">Чёрной команде</mark>.
       <p>
       <p>
         <img src="assets/images/bomb.svg" alt="">
-        <mark class="red">Игрокам красной команды</mark> нужно отправить <mark class="red">Бомбера</mark> к <mark class="blue">Президенту</mark>, при этом не выдав важную информацию <mark class="blue">Синей команде</mark>.
+        <mark class="red">Игрокам Чёрной команды</mark> нужно отправить <mark class="red">Кромешника</mark> к <mark class="blue">Джейми</mark>, при этом не выдав важную информацию <mark class="blue">Синей команде</mark>.
       </p>
     </section>
 
@@ -131,5 +131,9 @@
 
   <div class="header-image"><img src="assets/images/people.svg" alt=""></div>
 </section>
+
+<script>
+  console.log(Object.keys(Pages.roles).map(roleName => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?role=${encodeURIComponent(roleName)}`).join(' '));
+</script>
 </body>
 </html>
