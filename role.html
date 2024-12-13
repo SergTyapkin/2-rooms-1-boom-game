@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <link rel="icon" href="assets/images/favicon.svg">
+  <link rel="icon" href="assets/images/favicon.png">
   <title>2 ROOMS 1 BOOM</title>
 
   <script src="assets/scripts/pages.js"></script>
@@ -65,7 +65,7 @@
     descElement.innerHTML = '404 Информации о такой роли не найдено'
   } else {
     let description = role.description;
-    console.log(description);
+    description = description.replaceAll('\n', '\n\n');
     description = description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, (allText, roleName, roleLink) => {
       const foundRole = Pages.roles[roleLink];
       if (!foundRole) {
