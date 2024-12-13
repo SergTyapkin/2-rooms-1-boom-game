@@ -65,7 +65,7 @@
     descElement.innerHTML = '404 Информации о такой роли не найдено'
   } else {
     let description = role.description;
-    console.log(description);
+    description = description.replaceAll('\n', '\n\n');
     description = description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, (allText, roleName, roleLink) => {
       const foundRole = Pages.roles[roleLink];
       if (!foundRole) {

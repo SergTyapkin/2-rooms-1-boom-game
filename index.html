@@ -131,5 +131,10 @@
 
   <div class="header-image"><img src="assets/images/people.svg" alt=""></div>
 </section>
+
+
+<script>
+  console.log(Object.keys(Pages.roles).map(roleName => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?role=${encodeURIComponent(roleName)}`).join(' '));
+</script>
 </body>
 </html>
