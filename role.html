@@ -64,7 +64,16 @@
   if (!role) {
     descElement.innerHTML = '404 Информации о такой роли не найдено'
   } else {
-    descElement.innerHTML = role.description;
+    let description = role.description;
+    console.log(description);
+    description = description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, (allText, roleName, roleLink) => {
+      const foundRole = Pages.roles[roleLink];
+      if (!foundRole) {
+        return allText;
+      }
+      return `<mark class="${foundRole.team}"><a href="role.html?role=${encodeURIComponent(roleLink)}">${roleName}</a></mark>`;
+    });
+    descElement.innerHTML = description;
     blueCountElement.innerText = role.count;
     redCountElement.innerText = role.count;
     greyCountElement.innerText = role.count;

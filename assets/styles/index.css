@@ -145,6 +145,12 @@ mark.grey,
 .grey mark {
     color: #909090;
 }
+mark.both,
+.both mark {
+    color: transparent;
+    background: linear-gradient(-30deg, #ff8484 40%, #5590ff 60%);
+    background-clip: text;
+}
 mark.info,
 .info mark {
     color: #41c8c8;
@@ -256,10 +262,6 @@ input {
 }
 #role-description {
     white-space: pre-wrap;
-}
-#role-description a {
-    text-decoration: underline;
-    color: #76ffe6;
 }
 
 .hidden {
