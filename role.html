@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="icon" href="assets/images/favicon.png">
-  <title>2 ROOMS 1 BOOM</title>
+  <title>Защита Джейми</title>
 
   <script src="assets/scripts/pages.js"></script>
   <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
@@ -47,11 +47,10 @@
 
 
 <script>
-  const queryValue = new URLSearchParams(location.search).get("role");
+  const roleIdx = new URLSearchParams(location.search).get("idx");
 
   const titleElement = document.getElementById('role-title');
   const descElement = document.getElementById('role-description');
-  titleElement.innerText = queryValue;
 
   const blueCountElement = document.getElementById('blue-count');
   const redCountElement = document.getElementById('red-count');
@@ -60,18 +59,20 @@
   const redContainerElement = document.getElementById('red-container');
   const greyContainerElement = document.getElementById('grey-container');
 
-  const role = Pages.roles[queryValue];
+  const role = Pages.roles[roleIdx];
   if (!role) {
     descElement.innerHTML = '404 Информации о такой роли не найдено'
   } else {
+    titleElement.innerText = role.name;
     let description = role.description;
     description = description.replaceAll('\n', '\n\n');
     description = description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, (allText, roleName, roleLink) => {
-      const foundRole = Pages.roles[roleLink];
-      if (!foundRole) {
+      const foundRoleIdx = Pages.roles.findIndex(r => r.name === roleLink);
+      if (foundRoleIdx === -1) {
         return allText;
       }
-      return `<mark class="${foundRole.team}"><a href="role.html?role=${encodeURIComponent(roleLink)}">${roleName}</a></mark>`;
+      const foundRole = Pages.roles[foundRoleIdx];
+      return `<mark class="${foundRole.team}"><a href="role.html?idx=${foundRoleIdx}">${roleName}</a></mark>`;
     });
     descElement.innerHTML = description;
     blueCountElement.innerText = role.count;
