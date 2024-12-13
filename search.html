@@ -43,32 +43,33 @@
 
   function updateSearch() {
     const searchText = inputElement.value;
-    const resultList = Object.entries(Pages.roles).filter(
-      ([roleName, roleDesc]) => (new RegExp(searchText, 'i')).test(roleName)
+    const resultList = Pages.roles.filter(
+      (role) => (new RegExp(searchText, 'i')).test(role.name)
     );
     listElement.innerHTML = '';
-    resultList.forEach(([roleName, roleDesc]) => {
+    resultList.forEach((role, idx) => {
       let additionalClass = '';
       let imageHtml = '';
-      if (roleDesc.team === Teams.red) {
+      if (role.team === Teams.red) {
         additionalClass = 'red';
         imageHtml = `<img src="assets/images/bomb.svg" alt="">`;
-      } else if (roleDesc.team === Teams.blue) {
+      } else if (role.team === Teams.blue) {
         additionalClass = 'blue';
         imageHtml = `<img src="assets/images/shield_person.svg" alt="">`;
-      } else if (roleDesc.team === Teams.grey) {
+      } else if (role.team === Teams.grey) {
         additionalClass = 'grey';
         imageHtml = `<img src="assets/images/person_effect.svg" alt="">`;
-      } else if (roleDesc.team === Teams.both) {
+      } else if (role.team === Teams.both) {
         additionalClass = 'both';
         imageHtml = `<img src="assets/images/shield_person.svg" alt=""><img src="assets/images/bomb.svg" alt="">`;
       }
+      const description = role.description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, '$1');
       listElement.innerHTML += `
 <li class="search-role-item ${additionalClass}">
-  <a href="role.html?role=${encodeURIComponent(roleName)}">
-    <b class="title">${roleName}</b>
+  <a href="role.html?idx=${idx}">
+    <b class="title">${role.name}</b>
     ${imageHtml}
-    <div class="description">${roleDesc.description.slice(0, 100) + (roleDesc.description.length > 100 ? '...' : '')}</div>
+    <div class="description">${description.slice(0, 100) + (description.length > 100 ? '...' : '')}</div>
   </a>
 </li>`
     });

@@ -134,7 +134,8 @@
 
 
 <script>
-  console.log(Object.keys(Pages.roles).map(roleName => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?role=${encodeURIComponent(roleName)}`).join(' '));
+  console.log(Pages.roles.map((role, idx) => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?idx=${idx}`).join(' '));
+  console.log(Pages.roles.map(role => role.name).join('\n'));
 </script>
 </body>
 </html>
