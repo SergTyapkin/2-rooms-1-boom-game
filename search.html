@@ -43,11 +43,13 @@
 
   function updateSearch() {
     const searchText = inputElement.value;
+    Pages.roles.forEach((role, idx) => role._original_idx = idx);
     const resultList = Pages.roles.filter(
       (role) => (new RegExp(searchText, 'i')).test(role.name)
     );
+
     listElement.innerHTML = '';
-    resultList.forEach((role, idx) => {
+    resultList.forEach((role) => {
       let additionalClass = '';
       let imageHtml = '';
       if (role.team === Teams.red) {
@@ -66,7 +68,7 @@
       const description = role.description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, '$1');
       listElement.innerHTML += `
 <li class="search-role-item ${additionalClass}">
-  <a href="role.html?idx=${idx}">
+  <a href="role.html?idx=${role._original_idx}">
     <b class="title">${role.name}</b>
     ${imageHtml}
     <div class="description">${description.slice(0, 100) + (description.length > 100 ? '...' : '')}</div>
