@@ -65,7 +65,7 @@ function onServiceWorkerStateChanged(e = undefined) {
 // ------ MESSAGES HANDLING ---------
 const SWMessagesHandlers = {};
 function handleSWMessage(e) {
-  console.log('MESSAGE', e.data.type, e.data.uid, e.data.payload);
+  // console.log('MESSAGE', e.data.type, e.data.uid, e.data.payload);
   const type = Object.keys(SWMessagesHandlers).find(key => key === e.data.type);
   if (!type) {
     return;
