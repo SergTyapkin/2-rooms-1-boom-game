@@ -3,7 +3,7 @@
     font-style: normal;
     font-stretch: normal;
     font-display: swap;
-    src: local(ALS-Sector-Bold), local(ALS Sector Bold), url("/party-meeting/assets/fonts/ALS_Sector/ALS_Sector_Bold.ttf") format("truetype"), url("/party-meeting/assets/fonts/ALS_Sector/ALS_Sector_Bold.woff") format("woff");
+    src: local(ALS-Sector-Bold), local(ALS Sector Bold), url("../../assets/fonts/ALS_Sector/ALS_Sector_Bold.ttf") format("truetype"), url("../../assets/fonts/ALS_Sector/ALS_Sector_Bold.woff") format("woff");
     font-weight: 700;
 }
 @font-face {
@@ -11,7 +11,7 @@
     font-style: normal;
     font-stretch: normal;
     font-display: swap;
-    src: local(ALS-Sector-Regular), local(ALS Sector Regular), url("/party-meeting/assets/fonts/ALS_Sector/ALS_Sector_Regular.ttf") format("truetype"), url("/party-meeting/assets/fonts/ALS_Sector/ALS_Sector_Regular.woff") format("woff");
+    src: local(ALS-Sector-Regular), local(ALS Sector Regular), url("../../assets/fonts/ALS_Sector/ALS_Sector_Regular.ttf") format("truetype"), url("../../assets/fonts/ALS_Sector/ALS_Sector_Regular.woff") format("woff");
     font-weight: 500;
 }
 
