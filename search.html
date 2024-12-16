@@ -6,8 +6,8 @@
   <link rel="icon" href="assets/images/favicon.svg">
   <title>2 ROOMS 1 BOOM</title>
 
-  <script src="assets/scripts/pages.js"></script>
-  <script type="module" src="assets/scripts/registerSW.js" defer></script>
+  <script src="assets/scripts/pagesData.js"></script>
+  <script type="module" src="assets/scripts/SWTools.js" defer></script>
   <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
 </head>
 
@@ -38,7 +38,11 @@
 </section>
 
 
-<script>
+<script type="module" defer>
+  import SW from './assets/scripts/SWTools.js';
+  import {Teams, Pages} from './assets/scripts/pagesData.js';
+  await SW.register();
+
   const listElement = document.getElementById('roles-list');
   const inputElement = document.getElementById('input-search');
 

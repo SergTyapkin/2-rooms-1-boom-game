@@ -6,8 +6,6 @@
   <link rel="icon" href="assets/images/favicon.svg">
   <title>2 ROOMS 1 BOOM</title>
 
-  <script src="assets/scripts/pages.js"></script>
-  <script type="module" src="assets/scripts/registerSW.js" defer></script>
   <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
 </head>
 
@@ -21,6 +19,16 @@
     <h1>2 комнаты, 1 бомба</h1>
 
     <section>
+      <section class="download-sw-site" id="button-download">
+        <div id="button-download-text-info">
+          <img src="assets/images/download.svg" alt="download">Сохранить весь сайт на устройстве
+          <br>
+          <small><i>(Для доступа без интернета)</i></small>
+        </div>
+        <small><samp id="button-download-current-info"><!-- Text from JS --></samp></small>
+        <br>
+        <small><samp id="button-download-progress-info"><!-- Text from JS --></samp></small>
+      </section>
       <p>Все игроки разделены на две команды и случайно перемешаны между двумя комнатами. Сможете ли вы привести свою команду к победе?</p>
     </section>
 
@@ -128,15 +136,6 @@
     <hr>
 
     <section>
-      <button onclick="saveAllSite()" id="button-download">
-        <img src="assets/images/download.svg" alt="">Сохранить весь сайт на устройстве
-        <br>
-        <small><i>(Для доступа без интернета)</i></small>
-        <br>
-        <small><samp id="button-download-current-info"><!-- Text from JS --></samp></small>
-        <br>
-        <small><samp id="button-download-progress-info"><!-- Text from JS --></samp></small>
-      </button>
       <h2>На этом всё. Увидимся в игре!</h2>
     </section>
   </main>
@@ -145,33 +144,66 @@
 </section>
 
 
-<script>
-  console.log('Links and names to generating QR\'s:');
-  console.log(Pages.roles.map((role, idx) => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?idx=${idx}`).join(' '));
-  console.log(Pages.roles.map(role => role.name).join('\n'));
+<script type="module" defer>
+  import SW from './assets/scripts/SWTools.js';
+  import {Teams, Pages} from './assets/scripts/pagesData.js';
+  import {AllCachableResources} from './assets/scripts/constants.js';
+  await SW.register();
+
+  console.log('Ctrl + Alt + S to show data to generate QR\'s');
+  window.addEventListener('keydown', (e) => {
+    if (/([sы])/i.test(e.key) && e.ctrlKey && e.altKey) {
+      e.preventDefault();
+      console.log('Links and names to generating QR\'s:');
+      console.log(Pages.roles.map((role, idx) => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?idx=${idx}`).join(' '));
+      console.log(Pages.roles.map(role => role.name).join('\n'));
+      console.log(Pages.roles.map(role => role.name + '\n' + role.description).join('\n\n------------------\n\n'));
+    }
+  });
 
   const buttonDownload = document.getElementById('button-download');
+  const downloadTextInfo = document.getElementById('button-download-text-info');
   const currentFileDownloadInfo = document.getElementById('button-download-current-info');
   const progressDownloadInfo = document.getElementById('button-download-progress-info');
 
-  async function saveAllSite() {
-    await serviceWorkerCacheFiles([
-      'index.html',
-      'role.html',
-      'search.html',
-      'assets/scripts/pages.js',
-      'assets/styles/index.css',
-
-      'assets/images/info_card.svg',
-      'assets/images/person.svg',
-      'assets/images/player.svg',
-    ], ({current, progress, total}) => {
-      currentFileDownloadInfo.innerText = current;
-      progressDownloadInfo.innerText = `${progress}/${total}`;
-    });
-    buttonDownload.innerHTML = 'Сайт сохранен и доступен без интернета';
-    buttonDownload.setAttribute('disabled', 'true');
+  function showAllSiteSaved() {
+    downloadTextInfo.innerHTML = `Сайт сохранен и доступен без интернета`;
+    currentFileDownloadInfo.innerHTML = '<img src="assets/images/done.svg" alt="done">';
+    progressDownloadInfo.innerHTML = '';
+    buttonDownload.classList.add('done');
   }
+  function showSavingError(errorUrl) {
+    downloadTextInfo.innerHTML = `Ошибка при сохранении файлов сайта<br>${errorUrl}`;
+    currentFileDownloadInfo.innerHTML = '<img src="assets/images/warning.svg" alt="error">';
+    progressDownloadInfo.innerHTML = 'Сайт не будет доступен без интернета';
+    buttonDownload.classList.add('error');
+  }
+
+  async function saveAllSite() {
+    try {
+      downloadTextInfo.innerHTML = `<img src="assets/images/download.svg" alt="download">Сохранение всего сайта на устройстве...`;
+      buttonDownload.classList.remove('done');
+      buttonDownload.classList.remove('error');
+      await SW.cacheUrls(AllCachableResources, ({current, progress, total}) => {
+        currentFileDownloadInfo.innerHTML = current;
+        progressDownloadInfo.innerHTML = `${progress}/${total}`;
+      });
+      showAllSiteSaved();
+    } catch (err) {
+      console.log(err);
+      showSavingError(err);
+    }
+  }
+  async function saveAllIfNotSaved() {
+    if (await SW.isFilesCached(AllCachableResources)) {
+      showAllSiteSaved();
+      return;
+    }
+    await saveAllSite();
+  }
+
+  buttonDownload.addEventListener('click', saveAllSite);
+  saveAllIfNotSaved();
 </script>
 </body>
 </html>

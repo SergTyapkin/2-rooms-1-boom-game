@@ -264,18 +264,35 @@ input {
     white-space: pre-wrap;
 }
 
-#button-download {
+.download-sw-site {
     overflow: hidden;
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    min-width: 200px;
+    text-align: center;
+    border: 1px solid #7c7c7c;
+    border-radius: 8px;
+    padding: 10px;
+    outline: none;
+    background: none;
+    cursor: pointer;
 }
-#button-download #button-download-current-info {
+.download-sw-site #button-download-current-info {
     font-size: 10px;
     white-space: nowrap;
 }
-#button-download #button-download-progress-info {
+.download-sw-site #button-download-progress-info {
     color: #2cff25;
 }
-#button-download[disabled] {
+.download-sw-site.done {
     color: #2cff25;
+}
+.download-sw-site.error {
+    color: #ff2525;
+}
+.download-sw-site.error #button-download-progress-info {
+    color: #ffd355
 }
 
 .hidden {

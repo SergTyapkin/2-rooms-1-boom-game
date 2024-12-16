@@ -1,11 +1,11 @@
-window.Teams = {
+export const Teams = {
   red: 'red',
   blue: 'blue',
   grey: 'grey',
   both: 'both',
 }
 
-window.Pages = {
+export const Pages = {
   roles: [
     {
       name: 'Президент',
