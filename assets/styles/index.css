@@ -264,6 +264,21 @@ input {
     white-space: pre-wrap;
 }
 
+#button-download {
+    overflow: hidden;
+}
+#button-download #button-download-current-info {
+    font-size: 10px;
+    white-space: nowrap;
+}
+#button-download #button-download-progress-info {
+    color: #2cff25;
+}
+#button-download[disabled] {
+    color: #2cff25;
+}
+
 .hidden {
     display: none;
 }
+

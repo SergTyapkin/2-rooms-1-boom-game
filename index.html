@@ -7,7 +7,7 @@
   <title>2 ROOMS 1 BOOM</title>
 
   <script src="assets/scripts/pages.js"></script>
-  <script src="assets/scripts/registerSW.js" defer></script>
+  <script type="module" src="assets/scripts/registerSW.js" defer></script>
   <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
 </head>
 
@@ -127,7 +127,18 @@
 
     <hr>
 
-    <h2>На этом всё. Увидимся в игре!</h2>
+    <section>
+      <button onclick="saveAllSite()" id="button-download">
+        <img src="assets/images/download.svg" alt="">Сохранить весь сайт на устройстве
+        <br>
+        <small><i>(Для доступа без интернета)</i></small>
+        <br>
+        <small><samp id="button-download-current-info"><!-- Text from JS --></samp></small>
+        <br>
+        <small><samp id="button-download-progress-info"><!-- Text from JS --></samp></small>
+      </button>
+      <h2>На этом всё. Увидимся в игре!</h2>
+    </section>
   </main>
 
   <div class="header-image"><img src="assets/images/people.svg" alt=""></div>
@@ -135,8 +146,32 @@
 
 
 <script>
+  console.log('Links and names to generating QR\'s:');
   console.log(Pages.roles.map((role, idx) => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?idx=${idx}`).join(' '));
   console.log(Pages.roles.map(role => role.name).join('\n'));
+
+  const buttonDownload = document.getElementById('button-download');
+  const currentFileDownloadInfo = document.getElementById('button-download-current-info');
+  const progressDownloadInfo = document.getElementById('button-download-progress-info');
+
+  async function saveAllSite() {
+    await serviceWorkerCacheFiles([
+      'index.html',
+      'role.html',
+      'search.html',
+      'assets/scripts/pages.js',
+      'assets/styles/index.css',
+
+      'assets/images/info_card.svg',
+      'assets/images/person.svg',
+      'assets/images/player.svg',
+    ], ({current, progress, total}) => {
+      currentFileDownloadInfo.innerText = current;
+      progressDownloadInfo.innerText = `${progress}/${total}`;
+    });
+    buttonDownload.innerHTML = 'Сайт сохранен и доступен без интернета';
+    buttonDownload.setAttribute('disabled', 'true');
+  }
 </script>
 </body>
 </html>
