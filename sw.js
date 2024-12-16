@@ -1,6 +1,9 @@
 // наименование для нашего хранилища кэша
 const CACHE_KEYNAME = 'app_serviceworker_v_1';
 
+// период обновления кэша
+const CACHE_MAX_AGE_MS = 86400000; // 1 day
+
 // Стратегия кэширования.
 // true - сначала отдавать из кэша, а потом по возможности обновлять ресурс.
 // false - сначала ждать ответа на запрос, а потом отдавать из кэша, если запрос не прошел
@@ -80,8 +83,24 @@ async function setCached(url, response, openedCache=undefined) {
   if (isUrlNotCachable(url)) {
     return;
   }
+  url = rewriteUrlToCachedUrl(url);
   const cache = openedCache || await caches.open(CACHE_KEYNAME);
-  await cache.put(url, response.clone());
+
+  // Хотим установить хэдер 'saved-to-sw-datetime' в текущее время, чтобы от него потом отсчитывать истечение кэша
+  // Для этого создаем полную копию запроса, потому что Response не иммутабелен
+  response = response.clone();
+  const headers = new Headers();
+  for (const [key, val] of response.headers.entries()) {
+    headers.append(key, val);
+  }
+  headers.set('saved-to-sw-datetime', (new Date()).toISOString());
+  const blob = await response.blob();
+  const newResponse = new Response(blob, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: headers
+  });
+  await cache.put(url, newResponse);
 }
 async function downloadAll(urls, callbackEach, openedCache=undefined) {
   const cache = openedCache || await caches.open(CACHE_KEYNAME);
@@ -166,13 +185,13 @@ self.addEventListener('fetch', function (event) {
 
   const getResponseWithFetch = async () => {
     try {
-      const response = await fetch(event.request);
+      const response = await fetch(event.request.clone());
       if (response.ok) {
-        await setCached(event.request, response); // Добавляем в кэш
-        return response;
+        await setCached(event.request.url, response); // Добавляем в кэш
+        return response.clone();
       }
       return null;
-    } catch {
+    } catch (err) {
       return null;
     }
   };
@@ -181,8 +200,32 @@ self.addEventListener('fetch', function (event) {
     const url = rewriteUrlToCachedUrl(event.request.url);
     // Ищем кэш
     const cachedResponse = await caches.match(url);
-    // Отдаем либо кэш, либо ответ 418
-    return cachedResponse || new Response(`
+    if (cachedResponse) {
+      const savedDatetime = new Date(cachedResponse.headers.get('saved-to-sw-datetime'));
+      if (savedDatetime && (Date.now() - savedDatetime.getTime()) <= CACHE_MAX_AGE_MS) {
+        // Отдаем кэш
+        return cachedResponse;
+      } else {
+        // Отдаем инфу, что кэш истек
+        return new Response(`
+<html lang="en">
+<head>
+  <title>You're offline</title>
+  <meta charset="UTF-8"/>
+</head>
+<body align="center"">
+  <h1>Нет соединения</h1>
+  <p>
+    <b>Чтобы згрузить эту страницу, включите соединение</b>
+    <br>
+    <small><i>Она была загружена слишком давно, кэш уже истек</i></small>
+  </p>
+</body>
+</html>`, {headers: {'Content-Type': 'text/html'}});
+      }
+    }
+    // Отдаем инфу, что кэша нет
+    return new Response(`
 <html lang="en">
 <head>
   <title>You're offline</title>

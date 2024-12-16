@@ -29,7 +29,7 @@
         <br>
         <small><samp id="button-download-progress-info"><!-- Text from JS --></samp></small>
       </section>
-      <p>Все игроки разделены на две команды и случайно перемешаны между двумя комнатами. Сможете ли вы привести свою команду к победе?</p>
+      <p>Все игроки разделены на две команды и случайно перемешаны между двумя комнатами. Сможете ли вы привести свою команду к победе, не подозревая где свои, а где - чужие?</p>
     </section>
 
     <hr>
@@ -151,7 +151,7 @@
   await SW.register();
 
   console.log('Ctrl + Alt + S to show data to generate QR\'s');
-  window.addEventListener('keydown', (e) => {
+  window.addEventListener('keydown', async (e) => {
     if (/([sы])/i.test(e.key) && e.ctrlKey && e.altKey) {
       e.preventDefault();
       console.log('Links and names to generating QR\'s:');
@@ -160,6 +160,14 @@
       console.log(Pages.roles.map(role => role.name + '\n' + role.description).join('\n\n------------------\n\n'));
     }
   });
+  async function clearCache(e) {
+    e.preventDefault();
+    console.log('Clearing SW cache...');
+    await SW.clearCache();
+    console.log('SW cache cleared!');
+    downloadTextInfo.innerHTML = `Кэш очищен`;
+    alert('SW cache cleared!');
+  }
 
   const buttonDownload = document.getElementById('button-download');
   const downloadTextInfo = document.getElementById('button-download-text-info');
@@ -202,6 +210,7 @@
     await saveAllSite();
   }
 
+  buttonDownload.addEventListener('contextmenu', clearCache);
   buttonDownload.addEventListener('click', saveAllSite);
   saveAllIfNotSaved();
 </script>
