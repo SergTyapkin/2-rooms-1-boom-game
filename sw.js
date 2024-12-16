@@ -76,9 +76,15 @@ function rewriteUrlToCachedUrl(url) {
   }
   return url;
 }
-
-async function downloadAll(urls, callbackEach) {
-  const cache = await caches.open(CACHE_KEYNAME);
+async function setCached(url, response, openedCache=undefined) {
+  if (isUrlNotCachable(url)) {
+    return;
+  }
+  const cache = openedCache || await caches.open(CACHE_KEYNAME);
+  await cache.put(url, response.clone());
+}
+async function downloadAll(urls, callbackEach, openedCache=undefined) {
+  const cache = openedCache || await caches.open(CACHE_KEYNAME);
   const promises = [];
   let finishedCount = 0;
   let errorUrl = null;
@@ -86,8 +92,9 @@ async function downloadAll(urls, callbackEach) {
     if (isUrlNotCachable(url)) {
       return;
     }
-    promises.push(cache.add(url)
-      .then(() => {
+    promises.push(fetch(url)
+      .then(async (response) => {
+        await setCached(url, response.clone(), cache);
         finishedCount++;
         callbackEach({current: url, progress: finishedCount});
       })
@@ -99,14 +106,6 @@ async function downloadAll(urls, callbackEach) {
   });
   await Promise.all(promises);
   return errorUrl;
-}
-
-async function setCached(url, response) {
-  if (isUrlNotCachable(url)) {
-    return;
-  }
-  const cache = await caches.open(CACHE_KEYNAME);
-  await cache.put(url, response.clone());
 }
 
 self.addEventListener('message', async (event) => {
