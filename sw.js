@@ -204,13 +204,13 @@ self.addEventListener('fetch', function (event) {
       const savedDatetime = new Date(cachedResponse.headers.get('saved-to-sw-datetime'));
       if (savedDatetime && (Date.now() - savedDatetime.getTime()) <= CACHE_MAX_AGE_MS) {
         // Отдаем кэш
-        return cachedResponse;
+        return [cachedResponse, true];
       } else {
         // Отдаем инфу, что кэш истек
-        return new Response(`
-<html lang="en">
+        return [new Response(`
+<html lang="ru">
 <head>
-  <title>You're offline</title>
+  <title>Нет соединения</title>
   <meta charset="UTF-8"/>
 </head>
 <body align="center"">
@@ -221,14 +221,16 @@ self.addEventListener('fetch', function (event) {
     <small><i>Она была загружена слишком давно, кэш уже истек</i></small>
   </p>
 </body>
-</html>`, {headers: {'Content-Type': 'text/html'}});
+</html>`,
+         {headers: {'Content-Type': 'text/html'}},
+        ), false];
       }
     }
     // Отдаем инфу, что кэша нет
-    return new Response(`
-<html lang="en">
+    return [new Response(`
+<html lang="ru">
 <head>
-  <title>You're offline</title>
+  <title>Нет соединения</title>
   <meta charset="UTF-8"/>
 </head>
 <body align="center"">
@@ -239,18 +241,24 @@ self.addEventListener('fetch', function (event) {
     <small><i>Или этой страницы не существует</i></small>
   </p>
 </body>
-</html>`, {headers: {'Content-Type': 'text/html'}});
+</html>`,
+    {headers: {'Content-Type': 'text/html'}}
+   ), false];
   };
 
   event.respondWith(
     (async () => {
       if (STRATEGY_CACHE_FIRST) {
-        const result = await getResponseFromCache();
-        getResponseWithFetch();
-        return result;
+        const [cached, ok] = await getResponseFromCache();
+        if (ok) {
+          getResponseWithFetch();
+          return cached;
+        }
+        return (await getResponseWithFetch()) ||
+               cached;
       }
       return (await getResponseWithFetch()) ||
-             (await getResponseFromCache());
+             (await getResponseFromCache()[0]);
     })()
   );
 });
