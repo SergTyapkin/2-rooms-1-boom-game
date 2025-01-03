@@ -18,7 +18,7 @@
   <main class="main-text">
     <h1>2 комнаты, 1 бомба</h1>
 
-    <section>
+    <section class="animable-section">
       <section class="download-sw-site" id="button-download">
         <div id="button-download-text-info">
           <img src="assets/images/download.svg" alt="download">Сохранить весь сайт на устройстве
@@ -34,7 +34,7 @@
 
     <hr>
 
-    <section>
+    <section class="animable-section">
       <h3>Цели</h3>
       <p class="blue"><img src="assets/images/shield_person.svg" alt="">В <mark>Синей команде</mark> есть 1 <mark>Президент</mark></p>
       <p class="red"><img src="assets/images/bomb.svg" alt="">В <mark>Красной команде</mark> есть 1 <mark>Бомбер</mark></p>
@@ -47,7 +47,7 @@
 
     <hr>
 
-    <section>
+    <section class="animable-section">
       <h3>Раунды</h3>
       <p>
         5 раундов с ограниченной длительностью. После каждого раунда из каждой комнаты передают заданное число людей в другую комнату.
@@ -92,7 +92,7 @@
 
     <hr>
 
-    <section>
+    <section class="animable-section">
       <h3>Как играть?</h3>
       <p>
         <img src="assets/images/info_card.svg" alt="">
@@ -117,7 +117,7 @@
 
     <hr>
 
-    <section>
+    <section class="animable-section">
       <h3>Роли</h3>
       <p>Существует около 20 ролей.</p>
       <p><i>Большинство ролей дают способности совершать некоторые действия при открытии карт.</i></p>
@@ -135,7 +135,7 @@
 
     <hr>
 
-    <section>
+    <section class="animable-section">
       <h2>На этом всё. Увидимся в игре!</h2>
     </section>
   </main>
@@ -148,7 +148,11 @@
   import SW from './assets/scripts/SWTools.js';
   import {Teams, Pages} from './assets/scripts/pagesData.js';
   import {AllCachableResources} from './assets/scripts/constants.js';
+  import {addAddingClassOnVisible} from './assets/scripts/animations.js';
+
   await SW.register();
+
+  addAddingClassOnVisible(document.querySelectorAll('.animable-section'), 'visible');
 
   console.log('Ctrl + Alt + S to show data to generate QR\'s');
   window.addEventListener('keydown', async (e) => {

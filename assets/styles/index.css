@@ -299,3 +299,58 @@ input {
     display: none;
 }
 
+.animable-section {
+    opacity: 0;
+    transform: translateX(-20px) scaleX(0.95);
+    transform-origin: 0 50%;
+    transition: all 0.3s ease;
+}
+.animable-section.visible {
+    opacity: 1;
+    transform: translateX(0) scaleX(1);
+}
+.animable-section :where(h1, h2, h3, h4, h5, h6, header) {
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+    transition-delay: 0.1s;
+}
+.animable-section.visible :where(h1, h2, h3, h4, h5, h6, header) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.animation-open {
+    opacity: 0;
+    transform: translateX(-20px) scaleX(0.95);
+    transform-origin: 0 50%;
+    animation: 0.3s animation-open ease forwards running;
+    animation-delay: calc(.1s * var(--animation-idx));
+}
+@keyframes animation-open {
+    from {
+        opacity: 0;
+        transform: translateX(-20px) scaleX(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scaleX(1);
+    }
+}
+.animation-roll-up {
+    overflow: hidden;
+    transform: translateY(100px);
+    opacity: 0;
+    animation: 0.3s animation-roll-up ease forwards running;
+    animation-delay: calc(.1s * var(--animation-idx));
+}
+@keyframes animation-roll-up {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

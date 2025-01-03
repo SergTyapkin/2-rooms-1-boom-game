@@ -258,7 +258,7 @@ self.addEventListener('fetch', function (event) {
                cached;
       }
       return (await getResponseWithFetch()) ||
-             (await getResponseFromCache()[0]);
+             (await getResponseFromCache())[0];
     })()
   );
 });
