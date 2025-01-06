@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <title>2 ROOMS 1 BOOM</title>
+
+  <script type="module" src="assets/scripts/SWTools.js" defer></script>
+  <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
+</head>
+
+
+<body>
+<section class="page">
+  <h1 class="header-text">START</h1>
+
+  <main class="main-text">
+    <section class="animation-open" style="--animation-idx: 0">
+      <a href="search.html"><button>← К поиску <img src="assets/images/info_card.svg" alt=""></button></a>
+    </section>
+
+    <h1 class="animation-roll-up" style="--animation-idx: 0">Старт игры</h1>
+    <blockquote class="animation-open" style="--animation-idx: 1">Если ты - просто игрок, выйди с этой страницы. Она предназначена только для организатора игры</blockquote>
+
+    <hr>
+
+    <section class="game-settings animation-open" style="--animation-idx: 2">
+      <div class="row-inputs">
+        <label for="input-players" class="label">Игроков:</label>
+        <input type="text" class="number" id="input-players" value="1">
+        <div class="buttons-plus-minus">
+          <button class="minus" data-for="input-players">-</button>
+          <button class="plus" data-for="input-players">+</button>
+        </div>
+      </div>
+      <div class="row-inputs">
+        <label for="input-easy-mode" class="label">Простой режим:</label>
+        <input type="checkbox" id="input-easy-mode" class="number">
+      </div>
+      <div class="row-inputs">
+        <label for="input-players" class="label">Использовать роли несколько раз:</label>
+        <input type="text" class="number" id="input-roles-repeats" value="1">
+        <div class="buttons-plus-minus">
+          <button class="minus" data-for="input-roles-repeats">-</button>
+          <button class="plus" data-for="input-roles-repeats">+</button>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="animation-open" style="--animation-idx: 3">
+      <h1>Все роли, которые будут в игре</h1>
+      <button id="button-regenerate-roles">Перегенерировать</button>
+      <br>
+
+      <div class="roles-count">
+        <div class="blue" id="blue-container">
+          <img src="assets/images/shield_person.svg" alt="">
+          <mark><span id="blue-count"><!-- Text from JS --></span> синих</mark>
+        </div>
+        <div class="red" id="red-container">
+          <img src="assets/images/bomb.svg" alt="">
+          <mark><span id="red-count"><!-- Text from JS --></span> красных</mark>
+        </div>
+        <div class="grey" id="grey-container">
+          <img src="assets/images/person_effect.svg" alt="">
+          <mark><span id="grey-count"><!-- Text from JS --></span> серых</mark>
+        </div>
+      </div>
+
+      <br>
+
+      <ul id="roles-list">
+        <!-- Roles from JS -->
+      </ul>
+    </section>
+
+    <hr>
+
+    <section class="animation-open" style="--animation-idx: 3">
+      <h1>Итоговые QR-коды</h1>
+      <button id="button-generate-qrs">Сгенерировать на основе ролей</button>
+      <br>
+      <ul id="qr-codes-list">
+        <!-- QRs from JS -->
+      </ul>
+    </section>
+  </main>
+
+  <div class="header-image"><img src="assets/images/admin.svg" alt=""></div>
+</section>
+
+
+<script type="module" defer>
+  import SW from './assets/scripts/SWTools.js';
+  import {LocalStorageNames, Teams, Constraints, MIN_PLAYERS_COUNT, REQUIRED_ROLES, OPTIONAL_ROLES, ROLES, ROLES_LIST_ROLES_DELIMITER, ROLES_LIST_TEAM_DELIMITER, QueryParamsNames} from './assets/scripts/constants.js';
+  import qrcode from './assets/vendor/qrcodeGenerator.js';
+
+  await SW.register();
+
+
+  const isEasyMode = localStorage.getItem(LocalStorageNames.isEasyMode) === 'true';
+  const playersCount = Number(localStorage.getItem(LocalStorageNames.playersCount)) || MIN_PLAYERS_COUNT;
+
+  let takenRoles = [];
+
+  // Is easy mode input
+  const inputEasyMode = document.getElementById('input-easy-mode');
+  inputEasyMode.checked = isEasyMode;
+  inputEasyMode.addEventListener('input', () => {localStorage.setItem(LocalStorageNames.isEasyMode, String(inputEasyMode.checked))});
+
+  const listElement = document.getElementById('roles-list');
+  const inputRolesRepeats = document.getElementById('input-roles-repeats');
+  const blueCountElement = document.getElementById('blue-count');
+  const redCountElement = document.getElementById('red-count');
+  const greyCountElement = document.getElementById('grey-count');
+  const qrCodesListElement = document.getElementById('qr-codes-list');
+
+
+  // Players count input
+  const inputPlayers = document.getElementById('input-players');
+  const buttonsMinus = document.querySelectorAll('button.minus');
+  const buttonsPlus = document.querySelectorAll('button.plus');
+  inputPlayers.value = playersCount;
+  function onInputPlayers() {
+    if (!Number(inputPlayers.value) || Number(inputPlayers.value) < MIN_PLAYERS_COUNT) {
+      inputPlayers.value = MIN_PLAYERS_COUNT;
+    }
+    localStorage.setItem(LocalStorageNames.playersCount, inputPlayers.value);
+    updateRoles();
+  }
+  onInputPlayers();
+  inputPlayers.addEventListener('input', onInputPlayers);
+  buttonsMinus.forEach(button => button.addEventListener('click', () => {const inp = document.getElementById(button.getAttribute('data-for')); inp.value = Number(inp.value) - 1; onInputPlayers(); onInputRolesRepeats();}));
+  buttonsPlus.forEach(button => button.addEventListener('click', () => {const inp = document.getElementById(button.getAttribute('data-for')); inp.value = Number(inp.value) + 1; onInputPlayers(); onInputRolesRepeats();}));
+
+  function onInputRolesRepeats() {
+    if (!Number(inputRolesRepeats.value) || Number(inputRolesRepeats.value) < 1) {
+      inputRolesRepeats.value = 1;
+    }
+  }
+  inputRolesRepeats.addEventListener('input', onInputRolesRepeats);
+
+
+  // Roles generation
+  function updateRoles() {
+    qrCodesListElement.innerHTML = ''; // clear QRs - they're not actual anymore
+
+    const playersCount = Number(inputPlayers.value);
+    takenRoles = [];
+    const availableRoles = [];
+    Object.entries(REQUIRED_ROLES).forEach(([minPlayers, roles]) => {
+      if (playersCount < minPlayers) {
+        return;
+      }
+      roles.forEach(roleName => {
+        function addToTeam(team) {
+          takenRoles.push({
+            name: roleName,
+            team: team,
+          });
+        }
+        const role = ROLES.find(role => role.name === roleName);
+        if (role.team === Teams.both) {
+          addToTeam(Teams.red);
+          addToTeam(Teams.blue);
+          return;
+        }
+        addToTeam(role.team);
+      });
+    });
+    Object.entries(OPTIONAL_ROLES).forEach(([minPlayers, roles]) => {
+      if (playersCount >= minPlayers) {
+        availableRoles.push(...roles);
+      }
+    });
+
+    // Choose random roles
+    let i = 0;
+    while (takenRoles.length < playersCount) {
+      i++;
+      if (i > 10000) {
+        alert('Что-то пошло не так. Не удалось сгенерировать полный список ролей. Возможно, слишком много участников. Попробуйте еще раз (это правда иногда помогает), или увеличьте число в поле "использовать роли несколько раз"');
+        return;
+      }
+      const randomRole = availableRoles[Math.floor(Math.random() * availableRoles.length)]; // choose random role
+      const {reds, blues} = takenRoles.reduce(({reds, blues}, role) => {
+        if (role.team === Teams.red) {
+          return {reds: reds + 1, blues: blues};
+        } else if (role.team === Teams.blue) {
+          return {reds: reds, blues: blues + 1};
+        }
+        return {reds, blues};
+      }, {reds: 0, blues: 0});
+
+      let needingTeam;
+      if (reds > blues) {
+        needingTeam = Teams.blue;
+      } else if (reds < blues) {
+        needingTeam = Teams.red;
+      } else {
+        needingTeam = Math.random() > 0.5 ? Teams.blue : Teams.red;
+      }
+
+      const role = ROLES.find(role => role.name === randomRole.role);
+      if (!role) {
+        console.error('ERROR IN ROLE:', randomRole, 'UNKNOWN ROLE NAME!!!');
+        return;
+      }
+      function addToTeam(team, overrideRole = undefined) {
+        const _role = overrideRole || role;
+        const alreadyHasRolesCount = takenRoles.filter(hasRole => hasRole.name === _role.name && hasRole.team === team).length;
+        if (alreadyHasRolesCount >= _role.count * Number(inputRolesRepeats.value)) {
+          return false;
+        }
+        takenRoles.push({
+          name: _role.name,
+          team: team,
+        });
+        return true;
+      }
+
+      // if constraints
+      if (randomRole.constraint === Constraints.bothTeams) {
+        if (role.team !== Teams.both) {
+          console.error('ERROR IN ROLE:', randomRole, role, 'YOU SPECIFIED "BOTH" CONSTRAINT ON NON-BOTH TEAMS ROLE!!!');
+          return;
+        }
+        if (playersCount - takenRoles.length >= 2) {
+          addToTeam(Teams.red);
+          addToTeam(Teams.blue);
+        }
+        continue;
+      } else if (randomRole.constraint === Constraints.onlyOneTeam) {
+        if (role.team !== Teams.both) {
+          console.error('ERROR IN ROLE:', randomRole, role, 'YOU SPECIFIED "ONLY ONE TEAM" CONSTRAINT ON NON-BOTH TEAMS ROLE!!!');
+          return;
+        }
+        const alreadyHasRole = takenRoles.find(hasRole => hasRole.name === role.name);
+        if (!alreadyHasRole) {
+          addToTeam(needingTeam);
+        }
+        continue;
+      }
+      // No constraints or constraint withRole
+
+      if (role.team !== Teams.both) { // role can be only in 1 team
+        if (role.team !== Teams.grey && role.team !== needingTeam) {
+          continue; // role cannot be in needing team
+        }
+      }
+      const targetTeam = role.team === Teams.grey ? Teams.grey : needingTeam;
+
+      // No constraints
+      if (!randomRole.constraint) {
+        addToTeam(targetTeam);
+        continue;
+      }
+
+      // randomRole.constraint === Constraints.withRole
+      if (playersCount - takenRoles.length < 2) {
+        continue;
+      }
+      addToTeam(targetTeam);
+
+      const rolePair = ROLES.find(role => role.name === randomRole.withRole);
+      if (!role) {
+        console.error('ERROR IN "WITH ROLE" IN:', randomRole, 'UNKNOWN ROLE NAME!!!');
+        return;
+      }
+      if (rolePair.team === Teams.both) {
+        addToTeam(needingTeam === Teams.red ? Teams.blue : Teams.red, rolePair);
+        continue;
+      }
+      addToTeam(rolePair.team, rolePair);
+    }
+
+    takenRoles.sort((a, b) => a.name.localeCompare(b.name));
+
+
+    // Add taken roles to html
+    const {reds, blues, greys} = takenRoles.reduce(({reds, blues, greys}, role) => {
+      if (role.team === Teams.red) {
+        return {reds: reds + 1, blues: blues, greys: greys};
+      } else if (role.team === Teams.blue) {
+        return {reds: reds, blues: blues + 1, greys: greys};
+      } else  if (role.team === Teams.grey) {
+        return {reds: reds, blues: blues, greys: greys + 1};
+      }
+      return {reds, blues, greys};
+    }, {reds: 0, blues: 0, greys: 0});
+    blueCountElement.innerText = blues;
+    redCountElement.innerText = reds;
+    greyCountElement.innerText = greys;
+
+    listElement.innerHTML = '';
+    takenRoles.forEach((role) => {
+      let additionalClass = '';
+      let imageHtml = '';
+      if (role.team === Teams.red) {
+        additionalClass = 'red';
+        imageHtml = `<img src="assets/images/bomb.svg" alt="">`;
+      } else if (role.team === Teams.blue) {
+        additionalClass = 'blue';
+        imageHtml = `<img src="assets/images/shield_person.svg" alt="">`;
+      } else if (role.team === Teams.grey) {
+        additionalClass = 'grey';
+        imageHtml = `<img src="assets/images/person_effect.svg" alt="">`;
+      } else if (role.team === Teams.both) {
+        additionalClass = 'both';
+        imageHtml = `<img src="assets/images/shield_person.svg" alt=""><img src="assets/images/bomb.svg" alt="">`;
+      }
+      listElement.innerHTML += `
+<li class="search-role-item ${additionalClass}">
+  <b class="title">${role.name}</b>
+  ${imageHtml}
+</li>`
+    });
+  }
+  updateRoles();
+
+
+  // Regenerate button
+  document.getElementById('button-regenerate-roles').addEventListener('click', updateRoles);
+
+  // QR generators
+  document.getElementById('button-generate-qrs').addEventListener('click', () => {
+    qrCodesListElement.innerHTML = '<h3>Генерируем QR-коды...</h3>';
+    setTimeout(() => {
+      const clonedRoles = takenRoles.concat();
+      clonedRoles.sort(() => Math.random() - 0.5);
+      const rolesList = {};
+      clonedRoles.forEach(role => {
+        const foundRoleIdx = ROLES.findIndex(r => r.name === role.name);
+        if (rolesList[foundRoleIdx]) {
+          rolesList[foundRoleIdx] += role.team;
+          return;
+        }
+        rolesList[foundRoleIdx] = role.team;
+      });
+      const rolesStr = Object.entries(rolesList).map(([idx, teams]) => `${idx}${ROLES_LIST_TEAM_DELIMITER}${teams}`).join(ROLES_LIST_ROLES_DELIMITER);
+
+      const baseUrl = location.href.slice(0, location.href.lastIndexOf('/'));
+
+      qrCodesListElement.innerHTML = '';
+      clonedRoles.forEach((role, idx) => {
+        const foundRoleIdx = ROLES.findIndex(r => r.name === role.name);
+        const roleStr = `${foundRoleIdx}${ROLES_LIST_TEAM_DELIMITER}${role.team}`;
+
+        const qrStrData = `${baseUrl}/card.html?${QueryParamsNames.role}=${roleStr}&${QueryParamsNames.roles}=${rolesStr}&${QueryParamsNames.isEasyMode}=${isEasyMode}`;
+        const qr = new qrcode(0, 'L');
+        qr.addData(qrStrData);
+        qr.make();
+        qrCodesListElement.innerHTML += `<li class="qr">
+    ${qr.createSvgTag({})}
+    <h5><a href="${qrStrData}">Ссылка</a></h5>
+    <h1>Игрок #${idx + 1}</h1>
+  </li>`;
+      });
+    }, 0);
+  });
+</script>
+</body>
+</html>

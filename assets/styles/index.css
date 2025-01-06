@@ -85,6 +85,11 @@ body::-webkit-scrollbar-corner {
     margin: 60px auto;
     max-width: 700px;
 }
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .header-text {
     position: absolute;
     z-index: -1;
@@ -115,6 +120,14 @@ body::-webkit-scrollbar-corner {
     border-radius: 8px;
     backdrop-filter: blur(8px);
     background: #33333380;
+}
+.main-text.red-team {
+    border-color: #5d1d1d60;
+    background: #38191980;
+}
+.main-text.blue-team {
+    border-color: #1d335d60;
+    background: #19233880;
 }
 .lighter {
     color: #bebebe;
@@ -294,6 +307,87 @@ input {
 .download-sw-site.error #button-download-progress-info {
     color: #ffd355
 }
+
+
+.row-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.row-inputs .number {
+    box-sizing: content-box;
+    width: 2em;
+    padding: 5px 7px;
+}
+.buttons-plus-minus {
+    display: flex;
+}
+.buttons-plus-minus > * {
+    appearance: none;
+    height: 30px;
+    width: 30px;
+    min-width: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff05;
+    border: 1px solid #ffffff11;
+    color: #5a5a5a;
+    transition: all 0.2s ease;
+}
+#qr-codes-list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+#qr-codes-list .qr {
+    display: block;
+    width: 100%;
+    border: 1px solid #ffffff;
+    border-radius: 10px;
+}
+#qr-codes-list .qr svg {
+    display: block;
+    max-width: 100vw;
+    max-height: 80vh;
+}
+#qr-codes-list .qr svg > rect {
+    fill: #ffffff;
+}
+#qr-codes-list .qr svg > rect:nth-child(1) {
+    fill: transparent;
+}
+.card-hideable {
+    user-select: none;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+.card-hideable.card-hidden {
+    opacity: 0.3;
+    background: url('../images/hidden-texture.png') 50% 50% / 500% 1000%;
+    color: transparent;
+    mix-blend-mode: color-dodge;
+    filter: blur(2px);
+    animation: move-bg infinite linear 200s running both;
+}
+.card-hideable.card-hidden * {
+    color: transparent;
+    pointer-events: none;
+}
+@keyframes move-bg {
+    from {
+        background-position: 5% 5%;
+    }
+    to {
+        background-position: 95% 95%;
+    }
+}
+
 
 .hidden {
     display: none;

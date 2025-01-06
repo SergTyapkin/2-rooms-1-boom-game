@@ -6,29 +6,59 @@
   <link rel="icon" href="assets/images/favicon.svg">
   <title>2 ROOMS 1 BOOM</title>
 
-  <script src="assets/scripts/pagesData.js"></script>
   <script type="module" src="assets/scripts/SWTools.js" defer></script>
   <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
 </head>
 
 
 <body>
-<section class="page animation-open">
+<section class="page">
   <h1 class="header-text">ROLES</h1>
 
   <main class="main-text">
-    <a href="index.html"><button>← К правилам <img src="assets/images/favicon.svg" alt=""></button></a>
+    <section class="header-row animation-open" style="--animation-idx: 0">
+      <div></div>
+      <a href="index.html"><button>← К правилам <img src="assets/images/favicon.svg" alt=""></button></a>
+      <a href="start.html"><img src="assets/images/admin.svg" alt=""></a>
+    </section>
 
-    <h1>Поиск по ролям</h1>
+    <br>
+
+    <section id="current-game-info" class="hidden animation-open" style="--animation-idx: 0">
+      <div class="roles-count">
+        <div class="blue animation-roll-up" style="--animation-idx: 1" id="blue-container">
+          <img src="assets/images/shield_person.svg" alt="">
+          <mark><span id="blue-count"><!-- Text from JS --></span> синих</mark>
+        </div>
+        <div class="red animation-roll-up" style="--animation-idx: 2" id="red-container">
+          <img src="assets/images/bomb.svg" alt="">
+          <mark><span id="red-count"><!-- Text from JS --></span> красных</mark>
+        </div>
+        <div class="grey animation-roll-up" style="--animation-idx: 3" id="grey-container">
+          <img src="assets/images/person_effect.svg" alt="">
+          <mark><span id="grey-count"><!-- Text from JS --></span> серых</mark>
+        </div>
+      </div>
+      <br>
+      <a href="card.html"><button>Моя карточка <img src="assets/images/info_card.svg" alt=""></button></a>
+      <br>
+      <button id="button-clear-info">Очистить информацию <img src="assets/images/warning.svg" alt=""></button>
+      <hr>
+    </section>
+
+
+    <h1 class="animation-roll-up" style="--animation-idx: 0">Поиск по ролям</h1>
 
     <section>
-      <input class="text" id="input-search" placeholder="Название роли..." oninput="updateSearch()">
+      <div class="row-inputs animation-open" style="--animation-idx: 1">
+        <input class="text" id="input-search" placeholder="Название роли...">
+      </div>
     </section>
 
     <hr>
 
     <section>
-      <ul id="roles-list">
+      <ul id="roles-list" class="animation-open" style="--animation-idx: 2">
         <!-- Roles from JS -->
       </ul>
     </section>
@@ -40,16 +70,72 @@
 
 <script type="module" defer>
   import SW from './assets/scripts/SWTools.js';
-  import {Teams, Pages} from './assets/scripts/pagesData.js';
+  import {LocalStorageNames, Teams, ROLES, ROLES_LIST_ROLES_DELIMITER, ROLES_LIST_TEAM_DELIMITER} from './assets/scripts/constants.js';
+
   await SW.register();
 
+
+  // Current game info
+  let myRole = localStorage.getItem(LocalStorageNames.myRole);
+  let isEasyMode = localStorage.getItem(LocalStorageNames.isEasyMode) === 'true';
+  let rolesConfigStr = localStorage.getItem(LocalStorageNames.rolesConfigStr);
+  let rolesInGame
+  if (rolesConfigStr) {
+    const rolesSplitted = rolesConfigStr.split(ROLES_LIST_ROLES_DELIMITER);
+    rolesInGame = rolesSplitted.map(role => {
+      const [roleIdx, roleTeams] = role.split(ROLES_LIST_TEAM_DELIMITER);
+      const redsCount = roleTeams.split(Teams.red).length - 1;
+      const bluesCount = roleTeams.split(Teams.blue).length - 1;
+      const greysCount = roleTeams.split(Teams.grey).length - 1;
+      return {
+        name: ROLES[roleIdx].name,
+        description: ROLES[roleIdx].description,
+        _original_idx: roleIdx,
+        reds: redsCount,
+        blues: bluesCount,
+        greys: greysCount,
+        count: ROLES[roleIdx].count,
+        team: ROLES[roleIdx].team,
+      };
+    });
+    const blueCountElement = document.getElementById('blue-count');
+    const redCountElement = document.getElementById('red-count');
+    const greyCountElement = document.getElementById('grey-count');
+    const redsCount = rolesConfigStr.split(Teams.red).length - 1;
+    const bluesCount = rolesConfigStr.split(Teams.blue).length - 1;
+    const greysCount = rolesConfigStr.split(Teams.grey).length - 1;
+    blueCountElement.innerText = String(bluesCount);
+    redCountElement.innerText = String(redsCount);
+    greyCountElement.innerText = String(greysCount);
+    document.getElementById('current-game-info').classList.remove('hidden');
+  } else {
+    rolesInGame = ROLES;
+    rolesInGame.forEach((role, idx) => role._original_idx = idx);
+  }
+
+  // Button clear info
+  document.getElementById('button-clear-info').addEventListener('click', () => {
+    if (!confirm('Вы точно хотите удалить всю информацию о вашей карточке и текущей игре?\nЧтобы восстановить, придется отсканировать ваш игровой QR заново')) {
+      return;
+    }
+    localStorage.removeItem(LocalStorageNames.isEasyMode);
+    localStorage.removeItem(LocalStorageNames.myRole);
+    localStorage.removeItem(LocalStorageNames.rolesConfigStr);
+    isEasyMode = null;
+    myRole = null;
+    rolesConfigStr = null;
+    rolesInGame = ROLES.concat();
+    document.getElementById('current-game-info').classList.add('hidden');
+  });
+
+  // Roles search
   const listElement = document.getElementById('roles-list');
   const inputElement = document.getElementById('input-search');
 
   function updateSearch() {
     const searchText = inputElement.value;
-    Pages.roles.forEach((role, idx) => role._original_idx = idx);
-    const resultList = Pages.roles.filter(
+
+    const resultList = rolesInGame.filter(
       (role) => (new RegExp(searchText, 'i')).test(role.name)
     );
 
@@ -73,7 +159,7 @@
       const description = role.description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, '$1');
       listElement.innerHTML += `
 <li class="search-role-item ${additionalClass}">
-  <a href="role.html?idx=${role._original_idx}">
+  <a href="role.html?idx=${role._original_idx}&reds=${role.reds ?? role.count}&blues=${role.blues ?? role.count}&greys=${role.greys ?? role.count}">
     <b class="title">${role.name}</b>
     ${imageHtml}
     <div class="description">${description.slice(0, 100) + (description.length > 100 ? '...' : '')}</div>
@@ -83,6 +169,7 @@
   }
 
   updateSearch();
+  inputElement.addEventListener('input', updateSearch);
 </script>
 </body>
 </html>

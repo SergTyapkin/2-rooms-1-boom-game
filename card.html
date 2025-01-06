@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <title>2 ROOMS 1 BOOM</title>
+
+  <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
+</head>
+
+
+<body>
+<section class="page">
+  <h1 class="header-text">CARD</h1>
+
+  <main class="main-text" id="card-root">
+    <h1 class="animation-roll-up" style="--animation-idx: 0"><mark id="team-info"><!-- Text from JS --></mark> <img id="team-image" src="" alt=""></h1>
+
+    <hr>
+
+    <section class="card-hideable" onclick="this.classList.toggle('card-hidden')">
+      <h1 class="animation-roll-up" style="--animation-idx: 1"><mark id="role-title"><!-- Text from JS --></mark></h1>
+
+      <section class="animation-open" style="--animation-idx: 2">
+        <p id="role-description"><!-- Text from JS --></p>
+      </section>
+
+      <h5 class="animation-open" style="--animation-idx: 3">(нажми, чтобы скрыть)</h5>
+    </section>
+
+    <hr>
+
+    <div class="roles-count">
+      <div class="blue animation-roll-up" style="--animation-idx: 4" id="blue-container">
+        <img src="assets/images/shield_person.svg" alt="">
+        <mark><span id="blue-count"><!-- Text from JS --></span> синих</mark>
+      </div>
+      <div class="red animation-roll-up" style="--animation-idx: 5" id="red-container">
+        <img src="assets/images/bomb.svg" alt="">
+        <mark><span id="red-count"><!-- Text from JS --></span> красных</mark>
+      </div>
+      <div class="grey animation-roll-up" style="--animation-idx: 6" id="grey-container">
+        <img src="assets/images/person_effect.svg" alt="">
+        <mark><span id="grey-count"><!-- Text from JS --></span> серых</mark>
+      </div>
+    </div>
+    <br>
+    <a href="search.html" class="animation-roll-up" style="--animation-idx: 5"><button>Посмотреть все роли <img src="assets/images/info_card.svg" alt=""></button></a>
+  </main>
+
+  <div class="header-image"><img src="assets/images/person.svg" alt=""></div>
+</section>
+
+
+<script type="module" defer>
+  import SW from './assets/scripts/SWTools.js';
+  import {Teams, ROLES, QueryParamsNames, LocalStorageNames, ROLES_LIST_ROLES_DELIMITER, ROLES_LIST_TEAM_DELIMITER} from './assets/scripts/constants.js';
+  await SW.register();
+
+  const urlParams = new URLSearchParams(location.search);
+  const rolesConfigStr = urlParams.get(QueryParamsNames.roles) || localStorage.getItem(LocalStorageNames.rolesConfigStr);
+  const roleStr = urlParams.get(QueryParamsNames.role) || localStorage.getItem(LocalStorageNames.myRole);
+  const [roleIdx, roleTeam] = roleStr.split(ROLES_LIST_TEAM_DELIMITER);
+  const isEasyMode = (urlParams.get(QueryParamsNames.isEasyMode) || localStorage.getItem(LocalStorageNames.isEasyMode)) === 'true';
+
+  localStorage.setItem(LocalStorageNames.rolesConfigStr, rolesConfigStr);
+  const redsCount = rolesConfigStr.split(Teams.red).length - 1;
+  const bluesCount = rolesConfigStr.split(Teams.blue).length - 1;
+  const greysCount = rolesConfigStr.split(Teams.grey).length - 1;
+  const playersCount = redsCount + bluesCount + greysCount;
+  localStorage.setItem(LocalStorageNames.playersCount, String(playersCount));
+  localStorage.setItem(LocalStorageNames.isEasyMode, String(isEasyMode));
+  localStorage.setItem(LocalStorageNames.myRole, roleStr);
+
+  const titleElement = document.getElementById('role-title');
+  const descElement = document.getElementById('role-description');
+
+  const teamInfoElement = document.getElementById('team-info');
+  const teamImageElement = document.getElementById('team-image');
+
+  const cardRootElement = document.getElementById('card-root');
+
+  const blueCountElement = document.getElementById('blue-count');
+  const redCountElement = document.getElementById('red-count');
+  const greyCountElement = document.getElementById('grey-count');
+
+  const role = ROLES[roleIdx];
+  if (!role) {
+    descElement.innerHTML = '404 Информации о такой роли не найдено'
+  } else {
+    if (roleTeam === Teams.red) {
+      teamInfoElement.innerText = 'Красная команда';
+      teamInfoElement.classList.add('red');
+      titleElement.classList.add('red');
+      teamImageElement.src = 'assets/images/bomb.svg';
+      cardRootElement.classList.add('red-team');
+    } else if (roleTeam === Teams.blue) {
+      teamInfoElement.innerText = 'Синяя команда';
+      teamInfoElement.classList.add('blue');
+      titleElement.classList.add('blue');
+      teamImageElement.src = 'assets/images/shield_person.svg';
+      cardRootElement.classList.add('blue-team');
+    } else if (roleTeam === Teams.grey) {
+      teamInfoElement.innerText = 'Серый персонаж';
+      teamInfoElement.classList.add('grey');
+      titleElement.classList.add('grey');
+      teamImageElement.src = 'assets/images/person_effect.svg';
+      cardRootElement.classList.add('grey-team');
+    }
+
+    titleElement.innerText = role.name;
+    let description = role.description;
+    description = description.replaceAll('\n', '\n\n');
+    description = description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, (allText, roleName, roleLink) => {
+      const foundRoleIdx = ROLES.findIndex(r => r.name === roleLink);
+      if (foundRoleIdx === -1) {
+        return allText;
+      }
+      const foundRole = ROLES[foundRoleIdx];
+      let className = '';
+      if (foundRole.team === Teams.red) {
+        className = 'red';
+      } else if (foundRole.team === Teams.blue) {
+        className = 'blue';
+      } else if (foundRole.team === Teams.grey) {
+        className = 'grey';
+      } else if (foundRole.team === Teams.both) {
+        className = 'both';
+      }
+      return `<mark class="${className}"><a href="role.html?idx=${foundRoleIdx}">${roleName}</a></mark>`;
+    });
+    descElement.innerHTML = description;
+
+    blueCountElement.innerText = String(bluesCount);
+    redCountElement.innerText = String(redsCount);
+    greyCountElement.innerText = String(greysCount);
+  }
+</script>
+</body>
+</html>

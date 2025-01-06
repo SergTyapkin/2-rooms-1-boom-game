@@ -47,10 +47,14 @@
 
 <script type="module" defer>
   import SW from './assets/scripts/SWTools.js';
-  import {Teams, Pages} from './assets/scripts/pagesData.js';
+  import {Teams, ROLES} from './assets/scripts/constants.js';
   await SW.register();
 
-  const roleIdx = new URLSearchParams(location.search).get("idx");
+  const urlParams = new URLSearchParams(location.search);
+  const roleIdx = urlParams.get("idx");
+  const redsCount = urlParams.get("reds");
+  const bluesCount = urlParams.get("blues");
+  const greysCount = urlParams.get("greys");
 
   const titleElement = document.getElementById('role-title');
   const descElement = document.getElementById('role-description');
@@ -62,7 +66,7 @@
   const redContainerElement = document.getElementById('red-container');
   const greyContainerElement = document.getElementById('grey-container');
 
-  const role = Pages.roles[roleIdx];
+  const role = ROLES[roleIdx];
   if (!role) {
     descElement.innerHTML = '404 Информации о такой роли не найдено'
   } else {
@@ -70,17 +74,27 @@
     let description = role.description;
     description = description.replaceAll('\n', '\n\n');
     description = description.replaceAll(/\{([^{}]+)}\(([^()]*)\)/ig, (allText, roleName, roleLink) => {
-      const foundRoleIdx = Pages.roles.findIndex(r => r.name === roleLink);
+      const foundRoleIdx = ROLES.findIndex(r => r.name === roleLink);
       if (foundRoleIdx === -1) {
         return allText;
       }
-      const foundRole = Pages.roles[foundRoleIdx];
-      return `<mark class="${foundRole.team}"><a href="role.html?idx=${foundRoleIdx}">${roleName}</a></mark>`;
+      const foundRole = ROLES[foundRoleIdx];
+      let className = '';
+      if (foundRole.team === Teams.red) {
+        className = 'red';
+      } else if (foundRole.team === Teams.blue) {
+        className = 'blue';
+      } else if (foundRole.team === Teams.grey) {
+        className = 'grey';
+      } else if (foundRole.team === Teams.both) {
+        className = 'both';
+      }
+      return `<mark class="${className}"><a href="role.html?idx=${foundRoleIdx}">${roleName}</a></mark>`;
     });
     descElement.innerHTML = description;
-    blueCountElement.innerText = role.count;
-    redCountElement.innerText = role.count;
-    greyCountElement.innerText = role.count;
+    blueCountElement.innerText = bluesCount ?? role.count;
+    redCountElement.innerText = redsCount ?? role.count;
+    greyCountElement.innerText = greysCount ?? role.count;
     if (role.team === Teams.red) {
       redContainerElement.classList.remove('hidden');
     } else if (role.team === Teams.blue) {

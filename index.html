@@ -16,7 +16,7 @@
 
 
   <main class="main-text">
-    <h1>2 комнаты, 1 бомба</h1>
+    <h1 class="animation-roll-up" style="--animation-idx: 0">2 комнаты, 1 бомба</h1>
 
     <section class="animable-section">
       <section class="download-sw-site" id="button-download">
@@ -146,7 +146,6 @@
 
 <script type="module" defer>
   import SW from './assets/scripts/SWTools.js';
-  import {Teams, Pages} from './assets/scripts/pagesData.js';
   import {AllCachableResources} from './assets/scripts/constants.js';
   import {addAddingClassOnVisible} from './assets/scripts/animations.js';
 
@@ -159,9 +158,9 @@
     if (/([sы])/i.test(e.key) && e.ctrlKey && e.altKey) {
       e.preventDefault();
       console.log('Links and names to generating QR\'s:');
-      console.log(Pages.roles.map((role, idx) => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?idx=${idx}`).join(' '));
-      console.log(Pages.roles.map(role => role.name).join('\n'));
-      console.log(Pages.roles.map(role => role.name + '\n' + role.description).join('\n\n------------------\n\n'));
+      console.log(ROLES.map((role, idx) => location.href.slice(0, location.href.lastIndexOf('/')) + `/role.html?idx=${idx}`).join(' '));
+      console.log(ROLES.map(role => role.name).join('\n'));
+      console.log(ROLES.map(role => role.name + '\n' + role.description).join('\n\n------------------\n\n'));
     }
   });
   async function clearCache(e) {
