@@ -6,6 +6,7 @@ const CACHE_MAX_AGE_MS = 86400000; // 1 day
 
 // Стратегия кэширования.
 // true - сначала отдавать из кэша, а потом по возможности обновлять ресурс.
+// Но после истечения CACHE_MAX_AGE_MS стратегия переключится на false, пока актуальная версия ресурса не будет получена
 // false - сначала ждать ответа на запрос, а потом отдавать из кэша, если запрос не прошел
 const STRATEGY_CACHE_FIRST = true;
 
@@ -206,24 +207,8 @@ self.addEventListener('fetch', function (event) {
         // Отдаем кэш
         return [cachedResponse, true];
       } else {
-        // Отдаем инфу, что кэш истек
-        return [new Response(`
-<html lang="ru">
-<head>
-  <title>Нет соединения</title>
-  <meta charset="UTF-8"/>
-</head>
-<body align="center"">
-  <h1>Нет соединения</h1>
-  <p>
-    <b>Чтобы згрузить эту страницу, включите соединение</b>
-    <br>
-    <small><i>Она была загружена слишком давно, кэш уже истек</i></small>
-  </p>
-</body>
-</html>`,
-         {headers: {'Content-Type': 'text/html'}},
-        ), false];
+        // Отдаем кэш, но говорим, что он уже истек
+        return [cachedResponse, false];
       }
     }
     // Отдаем инфу, что кэша нет
@@ -233,7 +218,7 @@ self.addEventListener('fetch', function (event) {
   <title>Нет соединения</title>
   <meta charset="UTF-8"/>
 </head>
-<body align="center"">
+<body align="center">
   <h1>Нет соединения</h1>
   <p>
     <b>Чтобы згрузить эту страницу, включите соединение</b>
