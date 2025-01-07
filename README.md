@@ -1,6 +1,19 @@
 # 2 Rooms 1 Boom Game
-Deploy: https://sergtyapkin.github.io/2-rooms-1-boom-game/
+Сайт: https://sergtyapkin.github.io/2-rooms-1-boom-game/
 
-| ![image](https://github.com/user-attachments/assets/25a9c1a9-7972-4de8-9e23-145131dfda11) | ![image](https://github.com/user-attachments/assets/10532c8b-2332-4cdb-b993-bf430f7f5d12) |
-| --- | --- |
-| ![image](https://github.com/user-attachments/assets/90718ec1-bf6c-4d88-8c4a-a880e303001e) | ![image](https://github.com/user-attachments/assets/582451f2-4a26-418c-96e6-9bbf71bff516) |
+В проекте настроен серьёзный ServiceWorker, который загружает весь сайт при посещении главной страницы, чтобы он был доступен без интернета, после чего действует стратегия Cache First в течение суток. После этого необновленный кэш отдается только если запросы за новой версией ресурса не проходят.
+
+
+
+## До начала игры:
+| Главная страница с правилами ![image](https://github.com/user-attachments/assets/8886edd5-d4e0-40b5-b99a-263ff0c293d9) | Список всех возможных ролей в игре ![image](https://github.com/user-attachments/assets/ee6c2184-76ff-4cfa-8757-c260449681cd) |
+| :-: | :-: |
+|  |  |
+
+
+## После начала игры:
+| 1. Генерируем QR-коды для всех игроков ![image](https://github.com/user-attachments/assets/3b76b56c-c874-4e08-aac7-944584f29d45) | 2. После сканирования у каждого отображается только актуальный список ролей в текущей игре ![image](https://github.com/user-attachments/assets/cddf477b-3e83-49f4-a05a-a51ac64e78ff) |
+| :-: | :-: |
+| 3. Описание любой чужой роли ![image](https://github.com/user-attachments/assets/649b9f6f-f063-48cd-b181-b1e1adc03329) | 4. Ваша игровая карточка, с которой вы играете в этой игре ![image](https://github.com/user-attachments/assets/0d06aa48-96df-47aa-8aca-b1f540e238f1) |
+
+
