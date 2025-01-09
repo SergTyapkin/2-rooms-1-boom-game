@@ -239,6 +239,7 @@ input {
     display: flex;
     width: 100%;
     justify-content: space-evenly;
+    gap: 20px;
 }
 .search-role-item a {
     display: block;
