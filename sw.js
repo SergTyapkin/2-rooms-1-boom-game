@@ -18,7 +18,7 @@ const DISABLE_CACHING_URLS_REGEXPS = [
 // для страниц слева будут отдаваться ресурсы справа
 const RESOURCE_MAPPING_REGEXPS = {
   'role\\.html\\?idx=\\d+': 'role.html',
-  '(http(s)?://\w+(\.\w+)+)/?': '$1/index.html',
+  '(http(s)?://\\w+(\\.\\w+)+)/?': '$1/index.html',
 };
 
 // Типы PostMessage для общения приложения с service worker'ом
