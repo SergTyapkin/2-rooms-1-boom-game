@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <title>2 ROOMS 1 BOOM</title>
+
+  <script type="module" src="assets/scripts/SWTools.js" defer></script>
+  <link rel="stylesheet" type="text/css" href="assets/styles/index.css">
+</head>
+
+
+<body>
+<section class="page">
+  <h1 class="header-text">CHANGE</h1>
+
+  <main class="main-text">
+    <section class="animation-open" style="--animation-idx: 0">
+      <a href="card.html"><button>← Моя карточка <img src="assets/images/info_card.svg" alt=""></button></a>
+    </section>
+
+    <h1 class="animation-roll-up" style="--animation-idx: 1">Обмен картами</h1>
+
+    <hr>
+
+    <section class="animation-open" style="--animation-idx: 2">
+      <h1>Ваш QR-код</h1>
+      <blockquote>Дайте отсканировать его другому человеку. Не забудьте сами отсканировать его код</blockquote>
+
+      <br>
+
+      <div id="qr-code">
+        <!-- QR from JS -->
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="animation-open" style="--animation-idx: 3">
+      <h1>Сканер чужого QR-кода</h1>
+      <blockquote>Отсканируйте QR-код другого человека <mark class="blue">обязательно</mark> через этот сканер!</blockquote>
+      <br>
+      <video id="qr-scanner"></video>
+      <div id="camera-buttons-container" class="scrollable">
+        <!-- Cameras from JS -->
+      </div>
+      <p id="scanned-data"><!-- Scanned data from JS --></p>
+    </section>
+
+    <hr>
+
+    <button id="button-done" disabled class="animation-open" style="--animation-idx: 4">
+      Завершить обмен <img src="assets/images/done.svg" alt="">
+      <br>
+      <small><i>Убедитесь, что другой человек отсканировал ваш QR-код</i></small>
+    </button>
+  </main>
+
+  <div class="header-image"><img src="assets/images/change_card.svg" alt=""></div>
+</section>
+
+
+<script type="module" defer>
+  import SW from './assets/scripts/SWTools.js';
+  import {LocalStorageNames, QueryParamsNames} from './assets/scripts/constants.js';
+  import qrcode from './assets/vendor/qrcodeGenerator.js';
+  import QrScanner from './assets/vendor/qrcodeScanner.min.js';
+
+  await SW.register();
+
+
+  const isEasyMode = localStorage.getItem(LocalStorageNames.isEasyMode) === 'true';
+  const rolesConfigStr = localStorage.getItem(LocalStorageNames.rolesConfigStr);
+  const roleStr = localStorage.getItem(LocalStorageNames.myRole);
+
+  const qrCodeElement = document.getElementById('qr-code');
+  const qrScannerElement = document.getElementById('qr-scanner');
+  const buttonDoneElement = document.getElementById('button-done');
+  const scannedDataElement = document.getElementById('scanned-data');
+  const cameraButtonsElement = document.getElementById('camera-buttons-container');
+
+  if (!rolesConfigStr || !roleStr) {
+    qrCodeElement.innerHTML = '<h3>Нет информации об игре.<br>Сперва нужно получить карту</h3>';
+  } else {
+    // Generate QR-code
+    qrCodeElement.innerHTML = '<h3>Генерируем QR-код...</h3>';
+    setTimeout(() => {
+      const baseUrl = location.href.slice(0, location.href.lastIndexOf('/'));
+
+      const qrStrData = `${baseUrl}/card.html?${QueryParamsNames.role}=${roleStr}&${QueryParamsNames.roles}=${rolesConfigStr}&${QueryParamsNames.isEasyMode}=${isEasyMode}`;
+      const qr = new qrcode(0, 'L');
+      qr.addData(qrStrData);
+      qr.make();
+      qrCodeElement.innerHTML = `<div class="qr">
+  ${qr.createSvgTag({})}
+  <h5><a href="${qrStrData}" target="_blank">Ссылка из QR-кода (не переходите)</a></h5>
+</div>`;
+    }, 0);
+
+    // Initialize qr scanner
+    let otherQrCodeUrl = null;
+    try {
+      const scanner = new QrScanner(qrScannerElement, (result) => {
+        otherQrCodeUrl = result.data;
+        scannedDataElement.innerHTML = otherQrCodeUrl;
+        buttonDoneElement.removeAttribute('disabled');
+      }, {
+        highlightScanRegion: true,
+        maxScansPerSecond: 10,
+      });
+
+      scanner.start();
+    } catch (e) {
+      qrScannerElement.outerHTML = `<div><h3>Не предоставлены права доступа к камере</h3>
+<br>
+<small>Настройте доступ к камере для этого сайта в настройках браузера</small></div>`;
+    }
+
+    const existingCameras = await QrScanner.listCameras(true);
+    cameraButtonsElement.innerHTML = existingCameras.map(camera => `<button data-id="${camera.id}" class="button-camera">${camera.label}</button>`).join('');
+    document.querySelectorAll('button.button-camera').forEach(el => el.addEventListener('click', ev => {
+      const id = ev.target.getAttribute('data-id');
+      scanner.setCamera(id);
+    }));
+
+    // On click button. On finish
+    buttonDoneElement.addEventListener('click', () => {
+      if (!otherQrCodeUrl) {
+        return;
+      }
+      location.href = otherQrCodeUrl;
+    });
+  }
+</script>
+</body>
+</html>

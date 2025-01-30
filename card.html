@@ -19,7 +19,7 @@
 
     <hr>
 
-    <section class="card-hideable" onclick="this.classList.toggle('card-hidden')">
+    <section class="card-hideable" id="role-text-hideable">
       <h1 class="animation-roll-up" style="--animation-idx: 1"><mark id="role-title"><!-- Text from JS --></mark></h1>
 
       <section class="animation-open" style="--animation-idx: 2">
@@ -29,24 +29,27 @@
       <h5 class="animation-open" style="--animation-idx: 3">(нажми, чтобы скрыть)</h5>
     </section>
 
+    <a href="change-card.html" class="animation-roll-up" style="--animation-idx: 4"><button>Обменяться картой <img src="assets/images/change_card.svg" alt=""></button></a>
+
     <hr>
 
+    <h4 class="animation-roll-up" style="--animation-idx: 4">Всего в игре:</h4>
     <div class="roles-count">
-      <div class="blue animation-roll-up" style="--animation-idx: 4" id="blue-container">
+      <div class="blue animation-roll-up" style="--animation-idx: 5" id="blue-container">
         <img src="assets/images/shield_person.svg" alt="">
         <mark><span id="blue-count"><!-- Text from JS --></span> синих</mark>
       </div>
-      <div class="red animation-roll-up" style="--animation-idx: 5" id="red-container">
+      <div class="red animation-roll-up" style="--animation-idx: 6" id="red-container">
         <img src="assets/images/bomb.svg" alt="">
         <mark><span id="red-count"><!-- Text from JS --></span> красных</mark>
       </div>
-      <div class="grey animation-roll-up" style="--animation-idx: 6" id="grey-container">
+      <div class="grey animation-roll-up" style="--animation-idx: 7" id="grey-container">
         <img src="assets/images/person_effect.svg" alt="">
         <mark><span id="grey-count"><!-- Text from JS --></span> серых</mark>
       </div>
     </div>
     <br>
-    <a href="search.html" class="animation-roll-up" style="--animation-idx: 5"><button>Посмотреть все роли <img src="assets/images/info_card.svg" alt=""></button></a>
+    <a href="search.html" class="animation-roll-up" style="--animation-idx: 6"><button>Посмотреть все роли <img src="assets/images/info_card.svg" alt=""></button></a>
   </main>
 
   <div class="header-image"><img src="assets/images/person.svg" alt=""></div>
@@ -75,6 +78,7 @@
 
   const titleElement = document.getElementById('role-title');
   const descElement = document.getElementById('role-description');
+  const roleTextElement = document.getElementById('role-text-hideable');
 
   const teamInfoElement = document.getElementById('team-info');
   const teamImageElement = document.getElementById('team-image');
@@ -136,6 +140,15 @@
     redCountElement.innerText = String(redsCount);
     greyCountElement.innerText = String(greysCount);
   }
+
+  roleTextElement.addEventListener('click', ev => {
+    if (ev.target.tagName === 'A') {
+      ev.preventDefault();
+      location.href = ev.target.href;
+      return;
+    }
+    roleTextElement.classList.toggle('card-hidden');
+  });
 </script>
 </body>
 </html>

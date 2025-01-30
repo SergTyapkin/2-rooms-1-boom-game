@@ -370,7 +370,8 @@ input {
 }
 .card-hideable.card-hidden {
     opacity: 0.3;
-    background: url('../images/hidden-texture.png') 50% 50% / 500% 1000%;
+    background: url('../images/hidden-texture.png');
+    background-size: 700%;
     color: transparent;
     mix-blend-mode: color-dodge;
     filter: blur(2px);

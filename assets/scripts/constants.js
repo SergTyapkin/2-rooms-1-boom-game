@@ -12,6 +12,8 @@ export const AllCachableResources = [
   'assets/styles/index.css',
 
   'assets/vendor/qrcodeGenerator.js',
+  'assets/vendor/qrcodeScanner.min.js',
+  'assets/vendor/qr-scanner-worker.min.js',
 
   'assets/images/admin.svg',
   'assets/images/bomb.svg',
@@ -25,7 +27,10 @@ export const AllCachableResources = [
   'assets/images/info_card.svg',
   'assets/images/person_effect.svg',
   'assets/images/shield_person.svg',
+  'assets/images/change_card.svg',
   'assets/images/warning.svg',
+
+  'assets/images/hidden-texture.png',
 
   'assets/fonts/ALS_Sector/ALS_Sector_Bold.ttf',
   'assets/fonts/ALS_Sector/ALS_Sector_Bold.woff',
