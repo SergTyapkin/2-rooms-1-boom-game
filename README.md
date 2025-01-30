@@ -15,5 +15,6 @@
 | 1. Генерируем QR-коды для всех игроков ![image](https://github.com/user-attachments/assets/3b76b56c-c874-4e08-aac7-944584f29d45) | 2. После сканирования у каждого отображается только актуальный список ролей в текущей игре ![image](https://github.com/user-attachments/assets/cddf477b-3e83-49f4-a05a-a51ac64e78ff) |
 | :-: | :-: |
 | 3. Описание любой чужой роли ![image](https://github.com/user-attachments/assets/649b9f6f-f063-48cd-b181-b1e1adc03329) | 4. Ваша игровая карточка, с которой вы играете в этой игре ![image](https://github.com/user-attachments/assets/0d06aa48-96df-47aa-8aca-b1f540e238f1) |
+| 5. Обмен картами (способность некоторых ролей) ![image](https://github.com/user-attachments/assets/ec85c2c9-c2e2-43e6-a516-3d2792eff10f) |   |
 
 
