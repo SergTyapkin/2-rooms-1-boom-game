@@ -104,6 +104,7 @@
     try {
       scanner = new QrScanner(qrScannerElement, (result) => {
         otherQrCodeUrl = result.data;
+        console.log("QR Found:", result.data);
         scannedDataElement.innerHTML = otherQrCodeUrl;
         buttonDoneElement.removeAttribute('disabled');
       }, {
