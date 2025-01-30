@@ -390,6 +390,18 @@ input {
     }
 }
 
+#qr-scanner {
+    width: 100%;
+    padding: 10px;
+}
+#camera-buttons-container {
+    display: flex;
+    gap: 20px;
+    white-space: nowrap;
+    overflow-x: scroll;
+    padding: 10px;
+}
+
 
 .hidden {
     display: none;

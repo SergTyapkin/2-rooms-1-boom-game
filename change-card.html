@@ -100,8 +100,9 @@
 
     // Initialize qr scanner
     let otherQrCodeUrl = null;
+    let scanner = null;
     try {
-      const scanner = new QrScanner(qrScannerElement, (result) => {
+      scanner = new QrScanner(qrScannerElement, (result) => {
         otherQrCodeUrl = result.data;
         scannedDataElement.innerHTML = otherQrCodeUrl;
         buttonDoneElement.removeAttribute('disabled');
@@ -120,6 +121,9 @@
     const existingCameras = await QrScanner.listCameras(true);
     cameraButtonsElement.innerHTML = existingCameras.map(camera => `<button data-id="${camera.id}" class="button-camera">${camera.label}</button>`).join('');
     document.querySelectorAll('button.button-camera').forEach(el => el.addEventListener('click', ev => {
+      if (!scanner) {
+        return;
+      }
       const id = ev.target.getAttribute('data-id');
       scanner.setCamera(id);
     }));
