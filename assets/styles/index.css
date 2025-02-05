@@ -407,6 +407,10 @@ input {
     overflow-x: scroll;
     padding: 10px;
 }
+#camera-buttons-container > button {
+    white-space: break-spaces;
+    min-width: 200px;
+}
 
 .clickable {
     pointer-events: all;
