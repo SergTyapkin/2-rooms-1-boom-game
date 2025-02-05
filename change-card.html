@@ -82,13 +82,14 @@
   const scannedDataElement = document.getElementById('scanned-data');
   const cameraButtonsElement = document.getElementById('camera-buttons-container');
 
+  const baseUrl = location.href.slice(0, location.href.lastIndexOf('/'));
+
   if (!rolesConfigStr || !roleStr) {
     qrCodeElement.innerHTML = '<h3>Нет информации об игре.<br>Сперва нужно получить карту</h3>';
   } else {
     // Generate QR-code
     qrCodeElement.innerHTML = '<h3>Генерируем QR-код...</h3>';
     setTimeout(() => {
-      const baseUrl = location.href.slice(0, location.href.lastIndexOf('/'));
 
       const qrStrData = `${baseUrl}/card.html?${QueryParamsNames.role}=${roleStr}&${QueryParamsNames.roles}=${rolesConfigStr}&${QueryParamsNames.isEasyMode}=${isEasyMode}`;
       const qr = new qrcode(0, 'L');
@@ -96,7 +97,11 @@
       qr.make();
       qrCodeElement.innerHTML = `<div class="qr">
   ${qr.createSvgTag({})}
-  <h5><a href="${qrStrData}" target="_blank">Ссылка из QR-кода (не переходите)</a></h5>
+  <h5 class="clickable" onclick="navigator.clipboard.writeText('${qrStrData}'); this.innerHTML = 'Ссылка скопирована <img src=&quot;assets/images/done.svg&quot; alt=&quot;&quot;>';">
+    Скопировать ссылку из QR-кода
+    <br>
+    <small><i>Если другой человек не может отсканировать QR, передайте ему эту ссылку другим способом</i></small>
+  </h5>
 </div>`;
     }, 0);
 
@@ -136,6 +141,10 @@
     // On click button. On finish
     buttonDoneElement.addEventListener('click', () => {
       if (!otherQrCodeUrl) {
+        return;
+      }
+      if (!otherQrCodeUrl.startsWith(`${baseUrl}/card.html`)) {
+        alert('Отсканированный QR-код не является корректной ссылкой на игру или ведёт на другой сайт!');
         return;
       }
       location.href = otherQrCodeUrl;
